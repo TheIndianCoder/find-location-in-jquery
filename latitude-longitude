@@ -1,0 +1,52 @@
+<div class="form-group">
+    <button class="btn btn-primary" type="button" id="getLocation"> Get Location
+    </button>
+    <span class="text-danger" id="demo"></span>
+    <span class="text-success" id="success"></span>
+    <input type="text" name="latitude" id="latitude" hidden>
+    <input type="text" name="longitude" id="longitude" hidden>
+    @error('longitude')
+        <span class="text-danger">{{ $message }} </span>
+    @enderror
+</div>
+
+<script>
+    jQuery(document).ready(function($) {
+        $("#getLocation").click(function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(geoSucc, geoErr, geoOpt);
+            } else {
+                $("#demo").html('Geolocation is not supported by this browser.');
+            }
+        });
+
+      function geoSucc(position) {
+          var latitude = position.coords.latitude;
+          var longitude = position.coords.longitude;
+          $('#latitude').val(latitude);
+          $('#longitude').val(longitude);
+          $("#success").html(latitude + ',' + longitude);
+      }
+
+      function geoErr(error) {
+          switch (error.code) {
+              case error.PERMISSION_DENIED:
+                  $("#demo").html('User denied the request for Geolocation.');
+                  break;
+              case error.POSITION_UNAVAILABLE:
+                  $("#demo").html('Location information is unavailable.');
+                  break;
+              case error.TIMEOUT:
+                  $("#demo").html('The request to get user location timed out.');
+                  break;
+              case error.UNKNOWN_ERROR:
+                  $("#demo").html('An unknown error occurred.');
+                  break;
+          }
+      }
+      var geoOpt = {
+          timeout: 3000,
+          maximumAge: 30
+      }
+  });
+</script>
